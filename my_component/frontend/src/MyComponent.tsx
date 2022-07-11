@@ -62,6 +62,7 @@ class MyComponent extends StreamlitComponentBase<State> {
         <Plot
         onClick={this.onClicked}
         onSelected={this.onSelected}
+        onRelayout={this.onRelayout}
        data={[
          {
            x: [1, 2, 3],
@@ -79,6 +80,7 @@ class MyComponent extends StreamlitComponentBase<State> {
         },
        ]}
        layout={ {title: 'Scatter Plot'} }
+       
      />
       </span>
 
@@ -134,6 +136,31 @@ private onSelected = (data: { points: any[]; }): any => {
   // Return array as JSON to Streamlit
   Streamlit.setComponentValue(JSON.stringify(selectedPoints))
 }
+
+private onRelayout = (data: { points: any[]; }): any => {
+  // private onClicked = (): void => {
+    // Increment state.numClicks, and pass the new value back to
+    // Streamlit via `Streamlit.setComponentValue`.
+  //   this.setState(
+  //     prevState => ({ numClicks: prevState.numClicks + 1 }),
+  //     () => Streamlit.setComponentValue(this.state.numClicks)
+  //   )
+  // }
+  // var relayoutPoints: Array<any> = [];
+  // data.points.forEach(function (arrayItem: any) {
+  //   relayoutPoints.push({
+  //     x: arrayItem.x,
+  //     y: arrayItem.y,
+  //     curveNumber: arrayItem.curveNumber,
+  //     pointNumber: arrayItem.pointNumber,
+  //     pointIndex: arrayItem.pointIndex
+  //   })
+  // });
+
+  // Return array as JSON to Streamlit
+  Streamlit.setComponentValue(JSON.stringify(data))
+}
+
 
   /** Focus handler for our "Click Me!" button. */
   // private _onFocus = (): void => {
