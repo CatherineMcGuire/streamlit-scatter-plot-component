@@ -6,23 +6,23 @@ import {
 import React, { ReactNode } from "react"
 import Plot from 'react-plotly.js';
 
-interface State {
-  numClicks: number
-  isFocused: boolean
-}
+// interface State {
+//   numClicks: number
+//   isFocused: boolean
+// }
 
 /**
  * This is a React-based component template. The `render()` function is called
  * automatically when your component should be re-rendered.
  */
 class MyComponent extends StreamlitComponentBase<State> {
-  public state = { numClicks: 0, isFocused: false }
+  public state = { numClicks: 0, isFocused: false, data: [], layout: {}, frames: [], config: {} }
 
   public render = (): ReactNode => {
     // Arguments that are passed to the plugin in Python are accessible
     // via `this.props.args`. Here, we access the "name" arg.
-    const name = this.props.args["name"]
-    const greeting = this.props.args["greeting"]
+    // const name = this.props.args["name"]
+    // const greeting = this.props.args["greeting"]
 
     // Streamlit sends us a theme object via props that we can use to ensure
     // that our component has visuals that match the active theme in a
@@ -47,18 +47,20 @@ class MyComponent extends StreamlitComponentBase<State> {
     // variable, and send its new value back to Streamlit, where it'll
     // be available to the Python program.
     return (
+      // <span>
+      //   {greeting}, {name}! &nbsp;
+      //   <button
+      //     style={style}
+      //     onClick={this.onClicked}
+      //     disabled={this.props.disabled}
+      //     onFocus={this._onFocus}
+      //     onBlur={this._onBlur}
+      //   >
+      //     Click Me!
+      //   </button>
       <span>
-        {greeting}, {name}! &nbsp;
-        <button
-          style={style}
-          onClick={this.onClicked}
-          disabled={this.props.disabled}
-          onFocus={this._onFocus}
-          onBlur={this._onBlur}
-        >
-          Click Me!
-        </button>
         <Plot
+        onClick={this.onClicked}
        data={[
          {
            x: [1, 2, 3],
@@ -84,24 +86,39 @@ class MyComponent extends StreamlitComponentBase<State> {
   }
 
   /** Click handler for our "Click Me!" button. */
-  private onClicked = (): void => {
+  private onClicked = (data): any => {
+  // private onClicked = (): void => {
     // Increment state.numClicks, and pass the new value back to
     // Streamlit via `Streamlit.setComponentValue`.
-    this.setState(
-      prevState => ({ numClicks: prevState.numClicks + 1 }),
-      () => Streamlit.setComponentValue(this.state.numClicks)
-    )
-  }
+  //   this.setState(
+  //     prevState => ({ numClicks: prevState.numClicks + 1 }),
+  //     () => Streamlit.setComponentValue(this.state.numClicks)
+  //   )
+  // }
+  var clickedPoints: Array<any> = [];
+  data.points.forEach(function (arrayItem: any) {
+    clickedPoints.push({
+      x: arrayItem.x,
+      y: arrayItem.y,
+      curveNumber: arrayItem.curveNumber,
+      pointNumber: arrayItem.pointNumber,
+      pointIndex: arrayItem.pointIndex
+    })
+  });
+
+  // Return array as JSON to Streamlit
+  Streamlit.setComponentValue(JSON.stringify(clickedPoints))
+}
 
   /** Focus handler for our "Click Me!" button. */
-  private _onFocus = (): void => {
-    this.setState({ isFocused: true })
-  }
+  // private _onFocus = (): void => {
+  //   this.setState({ isFocused: true })
+  // }
 
   /** Blur handler for our "Click Me!" button. */
-  private _onBlur = (): void => {
-    this.setState({ isFocused: false })
-  }
+//   private _onBlur = (): void => {
+//     this.setState({ isFocused: false })
+//   }
 }
 
 // "withStreamlitConnection" is a wrapper function. It bootstraps the
