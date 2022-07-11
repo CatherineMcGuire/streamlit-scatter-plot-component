@@ -61,6 +61,7 @@ class MyComponent extends StreamlitComponentBase<State> {
       <span>
         <Plot
         onClick={this.onClicked}
+        onSelected={this.onSelected}
        data={[
          {
            x: [1, 2, 3],
@@ -86,7 +87,7 @@ class MyComponent extends StreamlitComponentBase<State> {
   }
 
   /** Click handler for our "Click Me!" button. */
-  private onClicked = (data): any => {
+  private onClicked = (data: { points: any[]; }): any => {
   // private onClicked = (): void => {
     // Increment state.numClicks, and pass the new value back to
     // Streamlit via `Streamlit.setComponentValue`.
@@ -108,6 +109,30 @@ class MyComponent extends StreamlitComponentBase<State> {
 
   // Return array as JSON to Streamlit
   Streamlit.setComponentValue(JSON.stringify(clickedPoints))
+}
+
+private onSelected = (data: { points: any[]; }): any => {
+  // private onClicked = (): void => {
+    // Increment state.numClicks, and pass the new value back to
+    // Streamlit via `Streamlit.setComponentValue`.
+  //   this.setState(
+  //     prevState => ({ numClicks: prevState.numClicks + 1 }),
+  //     () => Streamlit.setComponentValue(this.state.numClicks)
+  //   )
+  // }
+  var selectedPoints: Array<any> = [];
+  data.points.forEach(function (arrayItem: any) {
+    selectedPoints.push({
+      x: arrayItem.x,
+      y: arrayItem.y,
+      curveNumber: arrayItem.curveNumber,
+      pointNumber: arrayItem.pointNumber,
+      pointIndex: arrayItem.pointIndex
+    })
+  });
+
+  // Return array as JSON to Streamlit
+  Streamlit.setComponentValue(JSON.stringify(selectedPoints))
 }
 
   /** Focus handler for our "Click Me!" button. */
