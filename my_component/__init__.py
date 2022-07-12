@@ -3,6 +3,7 @@ import streamlit as st
 from json import loads
 import streamlit as st
 import plotly.graph_objects as go
+import pandas as pd
 
 _my_component = components.declare_component(
     "my_component",
@@ -43,8 +44,8 @@ st.subheader("Plotly Scatter Chart")
 # DEFINE PLOT  
 
 trace= go.Scatter(
-    x = [0, 1, 2, 3], 
-    y = [0, 1, 2, 3],
+    x = [0, 6, 2, 9], 
+    y = [0, 1, 8, 3],
     mode = 'markers'
     )
 fig = go.Figure([trace])
@@ -54,14 +55,33 @@ fig.layout.uirevision = True
 # RENDER PLOT
 
 plot_name_holder = st.empty()
-clickedPoint = scatter_events(fig, key="line")
-plot_name_holder.write(f"Clicked Point: {clickedPoint}")
+Points = scatter_events(fig, key="line")
+# plot_name_holder.write(f"Clicked Point: {clickedPoint}")
 
-# DATA TABLE
+# TABLE
+
+
 
 # Default - present all data points
 
-st.write(clickedPoint[0]['event_type'])
+if Points[0]['event_type'] == 'init':
+    data = Points
+    x_values = Points[0]['x_values']
+    y_values = Points[0]['y_values']
+    init_df = pd.DataFrame(data=Points[0])
+    table_df = init_df[["x_values", "y_values"]].rename(columns={"x_values" : "x", "y_values" : "y"})
+    st.write(table_df);
 
+# Zoom to select data set
 
-# On interaction - present selected / visible points
+elif Points[0]['event_type'] == 'relayout':
+    st.write('RELAYOUT');
+
+# Click to compare dataset]
+
+elif Points[0]['event_type'] == 'select':
+    st.write('SELECT');
+
+else:
+    st.write('NONE');
+
