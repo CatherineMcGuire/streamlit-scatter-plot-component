@@ -15,6 +15,7 @@ def scatter_events(
     select_event=True,
     hover_event=False,
     relay_event=True,
+    init=True,
     override_height=450,
     override_width="100%",
     key=None,
@@ -29,6 +30,7 @@ def scatter_events(
         select_event=select_event,
         hover_event=hover_event,
         relay_event=relay_event,
+        init=init,
         default="[]",  # Default return empty JSON list
     )
 
@@ -38,7 +40,7 @@ st.set_page_config(layout="wide")
 
 st.subheader("Plotly Scatter Chart")
 
-    
+# DEFINE PLOT  
 
 trace= go.Scatter(
     x = [0, 1, 2, 3], 
@@ -47,6 +49,19 @@ trace= go.Scatter(
     )
 fig = go.Figure([trace])
 fig.layout.uirevision = True 
+
+
+# RENDER PLOT
+
 plot_name_holder = st.empty()
 clickedPoint = scatter_events(fig, key="line")
 plot_name_holder.write(f"Clicked Point: {clickedPoint}")
+
+# DATA TABLE
+
+# Default - present all data points
+
+st.write(clickedPoint[0]['event_type'])
+
+
+# On interaction - present selected / visible points

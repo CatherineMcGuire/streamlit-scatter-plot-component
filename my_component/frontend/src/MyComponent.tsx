@@ -23,6 +23,7 @@ class MyComponent extends StreamlitComponentBase {
     const select_event = this.props.args["select_event"];
     const hover_event = this.props.args["hover_event"];
     const relay_event = this.props.args["relay_event"];
+    const init = this.props.args["init"];
 
     Streamlit.setFrameHeight(override_height);
 
@@ -37,6 +38,7 @@ class MyComponent extends StreamlitComponentBase {
         onSelected={select_event ? this.plotlyEventHandler : function(){}}
         onRelayout={relay_event ? this.onRelayout : function(){}}
         onHover={hover_event ? this.plotlyEventHandler : function(){}}
+        onInitialized={init ? this.onInit : function(){}}
         style={{width: override_width, height: override_height}}
         className="stPlotlyChart"
       />
@@ -76,6 +78,23 @@ class MyComponent extends StreamlitComponentBase {
     // Return array as JSON to Streamlit via `Streamlit.setComponentValue
     Streamlit.setComponentValue(JSON.stringify(relayoutPoints))
   }
+
+  private onInit = (data) => {
+
+    var allPoints: Array<any> = [];
+
+    allPoints.push({
+      event_type: 'init',
+      x_values: data.data[0]['x'],
+      y_values: data.data[0]['y']
+    });
+
+
+    // Return array as JSON to Streamlit via `Streamlit.setComponentValue
+    Streamlit.setComponentValue(JSON.stringify(allPoints))
+  }
+
+
 }
 
 // "withStreamlitConnection" is a wrapper function. It bootstraps the
