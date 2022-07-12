@@ -2,7 +2,6 @@ import streamlit.components.v1 as components
 import streamlit as st
 from json import loads
 import streamlit as st
-import plotly.express as px
 import plotly.graph_objects as go
 
 _my_component = components.declare_component(
