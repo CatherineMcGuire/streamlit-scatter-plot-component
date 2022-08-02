@@ -59,34 +59,63 @@ fig.layout.uirevision = True
 
 plot_name_holder = st.empty()
 Points = scatter_events(fig, key="line")
-# plot_name_holder.write(f"Clicked Point: {clickedPoint}")
 
-# TABLE
+# SELECT DATA
+
+# Default - present all data points in table
 
 table_data = {'x': x, 'y': y}
 table_df =  pd.DataFrame(data=table_data)
-st.write(table_df);
 
-# Default - present all data points
+# Zoom / Pan to select data
 
-# if Points[0]['event_type'] == 'init':
-#     data = Points
-#     x_values = Points[0]['x_values']
-#     y_values = Points[0]['y_values']
-#     init_df = pd.DataFrame(data=Points[0])
-#     table_df = init_df[["x_values", "y_values"]].rename(columns={"x_values" : "x", "y_values" : "y"})
-#     st.write(table_df);
+if Points[0]['event_type'] == 'relayout':
 
-# Zoom to select data set
+    # st.write(len(Points[0]))
 
-# elif Points[0]['event_type'] == 'relayout':
-#     st.write(Points);
+    
+    relayout_x0 = [Points[0]["xaxis0"]] if "xaxis0" in Points[0].keys() else [min(table_df['x'])]
+    relayout_x1 = [Points[0]["xaxis1"]] if "xaxis1" in Points[0].keys() else [max(table_df['x'])]
+    relayout_y0 = [Points[0]["yaxis0"]] if "yaxis0" in Points[0].keys() else [min(table_df['y'])]
+    relayout_y1 = [Points[0]["yaxis1"]] if "yaxis1" in Points[0].keys() else [max(table_df['y'])]
 
-# # Click to compare dataset]
+    table_df = table_df.loc[
+        (table_df['x'] >= relayout_x0[0]) & 
+        (table_df['x'] <= relayout_x1[0]) &
+        (table_df['y'] >= relayout_y0[0]) &
+        (table_df['y'] <= relayout_y1[0])
+        ]
 
-# elif Points[0]['event_type'] == 'select':
-#     st.write('SELECT');
+# Click to select data
 
-# else:
-#     st.write('NONE');
+if Points[0]['event_type'] == 'select':
+    select_x = [Points[0]["x"]]
+    select_y = [Points[0]["y"]]
+    select_data = {'x': select_x, 'y': select_y}
+    table_df = pd.DataFrame(data=select_data)
 
+# TABLE OF SELECTED DATA
+
+table_fig = go.Figure(data=[go.Table(
+            header=dict(
+                values=[
+                '<b>x</b>',
+                '<b>y</b>',
+                ],
+                        ),
+            cells=dict(values=[
+                table_df['x'],
+                table_df['y'],
+                ],
+                    fill_color=[['#f2f2f2','white']*100],
+                    height=30,
+                    align='left'))
+        ])
+
+table_fig.update_layout(
+        autosize=True,
+        height=900,
+        margin=dict(l=75,r=75,b=1,t=1),
+        )
+
+st.plotly_chart(table_fig, use_container_width=True)
